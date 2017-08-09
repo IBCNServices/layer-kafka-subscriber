@@ -50,7 +50,8 @@ def main():
     if not endpoint.startswith('http'):
         endpoint = 'http://' + endpoint
     s = requests.Session()
-
+    batch_size = 500
+    batch = []
     for msg in consumer:
         msg_value = msg.value.decode('utf-8')
         msg_dict = {}
@@ -60,11 +61,15 @@ def main():
             msg_dict['message'] = json.loads(msg_value)
         else:
             msg_dict['message'] = msg_value
-        send(s, endpoint, msg_dict)
+        batch.append(msg_dict)
+        if len(batch) == batch_size:
+            send(s, endpoint, {'batch': True, 'batch_data': batch})
+            batch.clear()
+
+
         if replay == "True":
             consumer.commit()
 
 
 if __name__ == '__main__':
     main()
-
