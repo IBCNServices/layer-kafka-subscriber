@@ -5,7 +5,7 @@ import json
 import datetime
 import requests
 import backoff
-#import hashlib
+import hashlib
 from kafka import KafkaConsumer, TopicPartition
 
 
